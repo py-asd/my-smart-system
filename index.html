@@ -26,6 +26,7 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.18);
             max-width: 85%;
+            width: 450px;
         }
         .pdf-btn {
             display: inline-flex;
@@ -51,13 +52,13 @@
 </head>
 <body>
     <div class="welcome-card">
-        <!-- صندوق الاسييتعلا1م الذكي اddلمحلي -->
+        <!-- صندوق الاستعلام الذكي المحلي -->
         <div class="search-container" style="margin-top: 20px; text-align: center;">
             <input type="number" id="searchNum" placeholder="أدخل الرقم التسلسلي للبحث..." style="padding: 10px; width: 250px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; text-align: center; color: black;">
-            <button onclick="searchTransaction()" style="padding: 10px 20px; background-color: #0070f3; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-left: 10px; font-weight: bold;">استعلام</button>
+            <button onclick="searchTransaction()" style="padding: 10px 20px; background-color: #0070f3; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-right: 10px; font-weight: bold;">استعلام</button>
         </div>
 
-        <!-- مكان عرض النتيجاةف للمستخدم -->
+        <!-- مكان عرض النتيجة للمستخدم -->
         <div id="resultBox" style="margin-top: 25px; padding: 20px; border-radius: 8px; background: rgba(255,255,255,0.15); display: none; text-align: right; direction: rtl; border: 1px solid rgba(255,255,255,0.2);">
         </div>
 
@@ -116,12 +117,28 @@
                 if(foundItem) {
                     let htmlContent = `<h3 style="text-align:center; color:#00ffcc; margin-bottom:15px;">📊 تفاصيل المعاملة المكتشفة</h3>`;
                     
+                    // 💡 قاموس الترجمة: قم بتعديل أو إضافة أي حقل إنجليزي هنا وما يقابله بالعربي
+                    const translationMap = {
+                        'NO_DEPT': 'رقم/رمز القسم',
+                        'DAT_DEPT': 'تاريخ القسم',
+                        'SUBJECT': 'الموضوع',
+                        'STATUS': 'الحالة',
+                        'NOTES': 'ملاحظات',
+                        'DATE': 'التاريخ',
+                        'NAME': 'الاسم'
+                    };
+                    
                     for (const key in foundItem) {
                         if (foundItem.hasOwnProperty(key)) {
                             let displayName = key;
-                            if (key === firstColumnName) displayName = 'الرقم التسلسلي';
-                            if (key === 'NO_DEPT') displayName = 'رقم/رمز القسم';
-                            if (key === 'DAT_DEPT') displayName = 'تاريخ القسم';
+                            
+                            // إذا كان الحقل هو العمود الأول، نعتبره الرقم التسلسلي تلقائياً
+                            if (key === firstColumnName) {
+                                displayName = 'الرقم التسلسلي';
+                            } else if (translationMap[key]) {
+                                // استبدال الاسم الإنجليزي بالعربي من القاموس
+                                displayName = translationMap[key];
+                            }
                             
                             htmlContent += `<p style="margin: 8px 0; color: white; font-size: 18px;"><strong>📌 ${displayName}:</strong> ${foundItem[key] || 'بلا'}</p>`;
                         }
