@@ -107,7 +107,7 @@
                 const csvText = decoder.decode(arrayBuffer);
                 
                 const parsed = parseCSV(csvText);
-                const firstColumnName = parsed.headers[0]; // تم إصلاحها هنا لتقرأ العمود الأول بشكل صحيح
+                const firstColumnName = parsed.headers[0]; 
                 
                 const foundItem = parsed.data.find(item => {
                     const itemValue = String(item[firstColumnName]).trim();
@@ -115,29 +115,28 @@
                 });
                 
                 if(foundItem) {
-                    let htmlContent = `<h3 style="text-align:center; color:#00ffcc; margin-bottom:15px;">📊 تفاصيل المعاملة 111المكتشفة</h3>`;
-                    
-                    // 💡 قاموس الترجمة المعتمد لحقول جدول البيانات الخاص بك
-                    const translationMap = {
-                        'NO_DEPT': 'رقم/رمز القسم',
-                        'DAT_DEPT': 'تاريخ القسم',
-                        'supject': 'الموضوع',
-                        'STATUS': 'الحالة',
-                        'NOTES': 'ملاحظات',
-                        'DATE': 'التاريخ',
-                        'NAME': 'الاسم'
-                    };
+                    let htmlContent = `<h3 style="text-align:center; color:#00ffcc; margin-bottom:15px;">📊 تفاصيل المعاملة المكتشفة</h3>`;
                     
                     for (const key in foundItem) {
                         if (foundItem.hasOwnProperty(key)) {
                             let displayName = key;
                             
-                            // إذا كان الحقل هو العمود الأول (المفتاح)، نعتبره الرقم التسلسلي تلقائياً
+                            // تحويل الاسم البرمجي للمقارنة بدون حساسية لحالة الأحرف
+                            const checkKey = key.trim().toLowerCase();
+                            
+                            // التحقق من الحقل الأول ليكون الرقم التسلسلي دائماً
                             if (key === firstColumnName) {
                                 displayName = 'الرقم التسلسلي';
-                            } else if (translationMap[key]) {
-                                // استبدال الاسم الإنجليزي بالعربي من القاموس
-                                displayName = translationMap[key];
+                            } 
+                            // مطابقة الحقل المستهدف المكتوب بـ p
+                            else if (checkKey === 'supject') {
+                                displayName = 'الموضوع';
+                            }
+                            else if (checkKey === 'no_dept') {
+                                displayName = 'رقم/رمز القسم';
+                            }
+                            else if (checkKey === 'dat_dept') {
+                                displayName = 'تاريخ القسم';
                             }
                             
                             htmlContent += `<p style="margin: 8px 0; color: white; font-size: 18px;"><strong>📌 ${displayName}:</strong> ${foundItem[key] || 'بلا'}</p>`;
