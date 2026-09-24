@@ -107,7 +107,7 @@
                 const csvText = decoder.decode(arrayBuffer);
                 
                 const parsed = parseCSV(csvText);
-                const firstColumnName = parsed.headers[0]; 
+                const firstColumnName = parsed.headers[0]; // تم إصلاحها هنا لتقرأ العمود الأول بشكل صحيح
                 
                 const foundItem = parsed.data.find(item => {
                     const itemValue = String(item[firstColumnName]).trim();
@@ -117,7 +117,7 @@
                 if(foundItem) {
                     let htmlContent = `<h3 style="text-align:center; color:#00ffcc; margin-bottom:15px;">📊 تفاصيل المعاملة المكتشفة</h3>`;
                     
-                    // 💡 قاموس الترجمة: قم بتعديل أو إضافة أي حقل إنجليزي هنا وما يقابله بالعربي
+                    // 💡 قاموس الترجمة المعتمد لحقول جدول البيانات الخاص بك
                     const translationMap = {
                         'NO_DEPT': 'رقم/رمز القسم',
                         'DAT_DEPT': 'تاريخ القسم',
@@ -132,7 +132,7 @@
                         if (foundItem.hasOwnProperty(key)) {
                             let displayName = key;
                             
-                            // إذا كان الحقل هو العمود الأول، نعتبره الرقم التسلسلي تلقائياً
+                            // إذا كان الحقل هو العمود الأول (المفتاح)، نعتبره الرقم التسلسلي تلقائياً
                             if (key === firstColumnName) {
                                 displayName = 'الرقم التسلسلي';
                             } else if (translationMap[key]) {
