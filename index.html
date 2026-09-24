@@ -68,7 +68,7 @@
             return str.replace(/["'\r]/g, '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
         }
 
-        // دالة مخصصة لتنظيف قيم التواريخ من أصفار الوقت الزائدة
+        // دالة مخصصة لتنظيف قيم التواريخ من أصفار الوقت الزائدة (تم تصحيحها بالكامل)
         function formatValue(value) {
             if (!value) return 'بلا';
             let strValue = String(value).trim();
@@ -78,9 +78,7 @@
                 return strValue.split(' ')[0];
             }
             
-           // الكود المصحح والآمن حالياً بداخل نسختك الأخيرة:
-             const dateWithTimeRegex = /^(\d{4}[-/]\d{1,2}[-/]\d{1,2}|\d{1,2}[-/]\d{1,2}[-/]\d{4})\s+\d{1,2}:\d{2}(:\d{2})?.*/i;
-
+            const dateWithTimeRegex = /^(\d{4}[-/]\d{1,2}[-/]\d{1,2}|\d{1,2}[-/]\d{1,2}[-/]\d{4})\s+\d{1,2}:\d{2}(:\d{2})?.*/i;
             if (dateWithTimeRegex.test(strValue)) {
                 return strValue.split(/\s+/)[0];
             }
@@ -93,7 +91,7 @@
             if (lines.length === 0) return { headers: [], data: [] };
 
             let delimiter = ',';
-            const firstLine = lines;
+            const firstLine = lines[0];
             if (firstLine.includes(';')) delimiter = ';';
             else if (firstLine.includes('\t')) delimiter = '\t';
 
@@ -134,7 +132,7 @@
                 const csvText = decoder.decode(arrayBuffer);
                 
                 const parsed = parseCSV(csvText);
-                const firstColumnName = parsed.headers; 
+                const firstColumnName = parsed.headers[0]; 
                 
                 const foundItem = parsed.data.find(item => {
                     const itemValue = String(item[firstColumnName]).trim();
@@ -174,7 +172,7 @@
                                 displayName = translationMap[checkKey];
                             }
                             
-                            // معالجة القيمة هنا قبل عرضها للتخلص من الوقت الزائد عبر دالة formatValue
+                            // تنظيف القيمة وعرض التاريخ الصافي فقط
                             let displayValue = formatValue(foundItem[key]);
                             
                             htmlContent += `<p style="margin: 8px 0; color: white; font-size: 18px;"><strong>📌 ${displayName}:</strong> ${displayValue}</p>`;
