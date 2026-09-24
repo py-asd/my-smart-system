@@ -68,12 +68,30 @@
             return str.replace(/["'\r]/g, '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
         }
 
+        // دالة مخصصة لتنظيف قيم التواريخ من أصفار الوقت الزائدة
+        function formatValue(value) {
+            if (!value) return 'بلا';
+            let strValue = String(value).trim();
+            
+            // إزالة الوقت الملحق بالكامل إذا كان وقت صفري افتراضي
+            if (strValue.includes(' 00:00:00') || strValue.includes(' 12:00:00 AM') || strValue.includes(' 00:00')) {
+                return strValue.split(' ')[0];
+            }
+            
+            const dateWithTimeRegex = /^(\d{4}[-/]\d{1,2}[-/]\d{1,2}|\d{1,2}[-/]\d{1,2}[-/]\d{4})\s+\d{1,2}:\d{2}(:\d{2})?.*\$/i;
+            if (dateWithTimeRegex.test(strValue)) {
+                return strValue.split(/\s+/)[0];
+            }
+            
+            return strValue;
+        }
+
         function parseCSV(text) {
             const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
             if (lines.length === 0) return { headers: [], data: [] };
 
             let delimiter = ',';
-            const firstLine = lines[0];
+            const firstLine = lines;
             if (firstLine.includes(';')) delimiter = ';';
             else if (firstLine.includes('\t')) delimiter = '\t';
 
@@ -114,7 +132,7 @@
                 const csvText = decoder.decode(arrayBuffer);
                 
                 const parsed = parseCSV(csvText);
-                const firstColumnName = parsed.headers[0]; 
+                const firstColumnName = parsed.headers; 
                 
                 const foundItem = parsed.data.find(item => {
                     const itemValue = String(item[firstColumnName]).trim();
@@ -124,23 +142,23 @@
                 if(foundItem) {
                     let htmlContent = `<h3 style="text-align:center; color:#00ffcc; margin-bottom:15px;">📊 تفاصيل المعاملة المكتشفة</h3>`;
                     
-                    // 💡 قاموس الترجمة الكامل لجميع حقول الجدول الـ 15 المأخوذة من صورتك بدقة
+                    // قاموس الترجمة الشامل المأخوذ من قاعدة بيانات Microsoft Access الخاصة بك
                     const translationMap = {
                         'num': 'الرقم التسلسلي',
                         'nno1': 'الرقم',
-                        'dato': 'تاريخ ورود',
+                        'date': 'تاريخ ورود',
                         'nno': 'رقم الحركة',
                         'datte': 'تاريخ ورودها',
                         'no_dept': 'رقم القسم',
-                        'dat_dept': 'تاريخ القسم',
+                        'da_dept': 'تاريخ القسم',
                         'from_office': 'الجهة المعدة للكتب',
                         'subject': 'الموضوع',
-                        'supject': 'الموضوع', // احتياطي كما هو بملف CSV الخاص بك
+                        'supject': 'الموضوع',
                         'rem': 'الملاحظات',
-                        'aljha_almursla': 'الجهة المرسلة',
+                        'aljh_a_mursla': 'الجهة المرسلة',
                         'pdf': 'ارتباط تشعبي',
                         'flagy': 'نص مختصر',
-                        'timy': 'تاريخ/وقت',
+                        'timy': 'تاريخ/وقت المعاملة',
                         'dat_m': 'رقم (شهر)',
                         'dat_y': 'رقم (سنة)'
                     };
@@ -154,7 +172,10 @@
                                 displayName = translationMap[checkKey];
                             }
                             
-                            htmlContent += `<p style="margin: 8px 0; color: white; font-size: 18px;"><strong>📌 ${displayName}:</strong> ${foundItem[key] || 'بلا'}</p>`;
+                            // معالجة القيمة هنا قبل عرضها للتخلص من الوقت الزائد عبر دالة formatValue
+                            let displayValue = formatValue(foundItem[key]);
+                            
+                            htmlContent += `<p style="margin: 8px 0; color: white; font-size: 18px;"><strong>📌 ${displayName}:</strong> ${displayValue}</p>`;
                         }
                     }
                     
