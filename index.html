@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -26,7 +26,7 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.18);
             max-width: 85%;
-            width: 450px;
+            width: 500px;
         }
         .pdf-btn {
             display: inline-flex;
@@ -65,7 +65,6 @@
         <script>
         function cleanString(str) {
             if (!str) return '';
-            // تنظيف النص تماماً من علامات الاقتباس، المسافات الزائدة، والرموز المخفية
             return str.replace(/["'\r]/g, '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
         }
 
@@ -78,7 +77,6 @@
             if (firstLine.includes(';')) delimiter = ';';
             else if (firstLine.includes('\t')) delimiter = '\t';
 
-            // استخراج وتنظيف الحقول من السطر الأول
             const headers = firstLine.split(delimiter).map(h => cleanString(h));
             const result = [];
 
@@ -126,20 +124,31 @@
                 if(foundItem) {
                     let htmlContent = `<h3 style="text-align:center; color:#00ffcc; margin-bottom:15px;">📊 تفاصيل المعاملة المكتشفة</h3>`;
                     
-                    // قاموس الترجمة الشامل بعد تنظيف الحقول
+                    // 💡 قاموس الترجمة الكامل لجميع حقول الجدول الـ 15 المأخوذة من صورتك بدقة
                     const translationMap = {
                         'num': 'الرقم التسلسلي',
-                        'Rem': 'الموضوع',
+                        'nno1': 'الرقم',
+                        'date': 'تاريخ ورود',
+                        'nno': 'رقم الحركة',
+                        'datte': 'تاريخ ورودها',
+                        'no_dept': 'رقم القسم',
+                        'da_dept': 'تاريخ القسم',
+                        'from_office': 'الجهة المعدة للكتب',
                         'subject': 'الموضوع',
-                        'no_dept': 'رقم/رمز القسم',
-                        'dat_dept': 'تاريخ القسم',
-                        'nno1': 'رقم القسم المطور' // إضافة حقل تجريبي بناءً على صورتك
+                        'supject': 'الموضوع', // احتياطي كما هو بملف CSV الخاص بك
+                        'rem': 'الملاحظات',
+                        'aljh_a_mursla': 'الجهة المرسلة',
+                        'pdf': 'ارتباط تشعبي',
+                        'flagy': 'نص مختصر',
+                        'timy': 'تاريخ/وقت',
+                        'dat_m': 'رقم (شهر)',
+                        'dat_y': 'رقم (سنة)'
                     };
                     
                     for (const key in foundItem) {
                         if (foundItem.hasOwnProperty(key)) {
                             let displayName = key;
-                            const checkKey = key.toLowerCase();
+                            const checkKey = key.toLowerCase().trim();
                             
                             if (translationMap[checkKey]) {
                                 displayName = translationMap[checkKey];
