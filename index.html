@@ -140,7 +140,7 @@
                 });
                 
                 if(foundItem) {
-                    let htmlContent = `<h3 style="text-align:center; color:#ffff00; margin-bottom:15px;">📊 تفاصيل المعاملة المكتشفة</h3>`;
+                           let htmlContent = `<h3 style="text-align:center; color:#ffff00; margin-bottom:15px;">📊 تفاصيل المعاملة المكتشفة</h3>`;
                     
                     // قاموس الترجمة الشامل المأخوذ من قاعدة بيانات Microsoft Access الخاصة بك
                     const translationMap = {
@@ -175,7 +175,7 @@
                             // تنظيف القيمة وعرض التاريخ الصافي فقط
                             let displayValue = formatValue(foundItem[key]);
                             
-                            htmlContent += `<p style="margin: 8px 0; color: blue; font-size: 18px;"><strong>📌 ${displayName}:</strong> ${displayValue}</p>`;
+                            htmlContent += `<p style="margin: 8px 0; color: red; font-size: 18px;"><strong>📌 ${displayName}:</strong> ${displayValue}</p>`;
                         }
                     }
                     
